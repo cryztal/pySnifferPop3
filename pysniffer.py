@@ -30,6 +30,7 @@ try:
     s = socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0003))
     sessionAll = []
     while True:
+        # get packet information
         packet = s.recvfrom(65565)
 
         packet = packet[0]
@@ -37,13 +38,13 @@ try:
         eth_length = 14
 
         eth_header = packet[:eth_length]
-
+        # parse ethernet protocol
         eth = unpack('!6s6sH', eth_header)
 
         eth_protocol = socket.ntohs(eth[2])
 
         if eth_protocol == 8:
-
+            # parse ip protocol
             ip_header = packet[eth_length:20 + eth_length]
 
             iph = unpack('!BBHHHBBH4s4s', ip_header)
@@ -58,7 +59,7 @@ try:
             d_addr = socket.inet_ntoa(iph[9]);
 
             if protocol == 6:
-
+                # parse tcp protocol
                 tcp_header = packet[34:54]
 
                 tcph = unpack('!HHLLBBHHH', tcp_header)
@@ -73,14 +74,16 @@ try:
 
                 h_size = eth_length + iph_length + tcph_length
                 data = packet[h_size:]
-
+                # check pop3 communication without encryption and catching pop3 session
                 if dest_port == 110 or source_port == 110:
                     elem = SessionElem(str(s_addr), str(source_port), str(d_addr), str(dest_port), str(sequence),
                                        str(acknowledgement), str(data))
                     if (data != ("").encode('utf-8')) and (data.find(("\x00").encode('utf-8'))) == -1:
                         sessionAll.append(elem)
+                        # find closing connection
                         if data == ('+OK CommuniGate Pro POP3 Server connection closed\r\n').encode('utf-8'):
                             break;
+    # sort sesion to order
     sessionAll.sort(key=sortbyseq)
 
     print('\n\tFull session')
