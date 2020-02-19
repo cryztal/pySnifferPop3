@@ -79,18 +79,6 @@ try:
                                        str(acknowledgement), str(data))
                     if (data != ("").encode('utf-8')) and (data.find(("\x00").encode('utf-8'))) == -1:
                         sessionAll.append(elem)
-                        # print(
-                        # 'Source IP   : ' + str(s_addr))
-                        # print(
-                        # 'Source Port : ' + str(source_port))
-                        # print(
-                        # 'Dest IP     : ' + str(d_addr))
-                        # print(
-                        # 'Dest Port   : ' + str(dest_port))
-                        # print(
-                        # 'Sequence Number : ' + str(sequence) + ' Acknowledgement : ' + str(acknowledgement))
-                        # print(
-                        # 'Data : ', str(data))
                         if data == ('+OK CommuniGate Pro POP3 Server connection closed\r\n').encode('utf-8'):
                             break;
     sessionAll.sort(key=sortbyseq)
